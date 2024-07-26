@@ -107,7 +107,7 @@ Minimum Value: At least 0.01 and not null
 --1. What is the acceptance rate over time? -- LATER MAYBE INCLUDE NO CHARGEBACK FILTER
 SELECT 
     DATE_TRUNC('month', TRANSACTION_TIMESTAMP_UTC) AS month,
-    COUNT_IF(transaction_accepted)/COUNT(*)
+    COUNT_IF(transaction_accepted)/COUNT(*) AS N_accepted_transactions
 FROM 
      GLOBEPAY.DEV.TRANSACTIONS
 GROUP BY 
@@ -136,3 +136,8 @@ SELECT external_ref FROM GLOBEPAY.RAW.ACCEPTANCE
 EXCEPT
 SELECT external_ref FROM GLOBEPAY.RAW.CHARGEBACK 
 ```
+1. What is the acceptance rate over time?
+![alt text](image-3.png)
+
+2. List the countries where the amount of declined transactions went over $25M
+![alt text](image-4.png)
