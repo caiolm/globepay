@@ -2,6 +2,28 @@
 
 ## Part 1  
 ### 1. Preliminary data exploration
+```sql
+-- status is always true
+SELECT DISTINCT status as status_distinct, 'ACCEPTANCE' AS TB from GLOBEPAY.RAW.ACCEPTANCE
+UNION ALL
+SELECT DISTINCT status as status_distinct, 'CHARGEBACK' AS TB from GLOBEPAY.RAW.CHARGEBACK
+
+-- external_ref is the primary key. unique and can be used to join the tables
+SELECT count(DISTINCT a.external_ref) as n_acceptance,  count(distinct c.external_ref) as n_chargeback
+FROM GLOBEPAY.RAW.ACCEPTANCE a
+FULL OUTER JOIN GLOBEPAY.RAW.CHARGEBACK c on a.external_ref = c.external_ref
+
+-- Only 1 transaction is smaller than 0.
+SELECT * from  GLOBEPAY.RAW.ACCEPTANCE
+WHERE amount <0
+
+-- There can only be chargeback when the transaction was accepted in the first place (state = accepted)
+SELECT DISTINCT STATE, chargeback, count(*) as n
+FROM GLOBEPAY.RAW.ACCEPTANCE a
+INNER JOIN GLOBEPAY.RAW.CHARGEBACK c on a.external_ref = c.external_ref
+GROUP BY STATE, chargeback
+ORDER BY n
+```
 
 ### 2. Summary of the model architecture
 
