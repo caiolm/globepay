@@ -25,8 +25,11 @@ models:
       - name: card_country_code
         description: The two-character ISO country code of the card.
 
-      - name: currency_rate
+      - name: currency_code
         description: The three-character ISO currency code.
+
+      - name: currency_rate
+        description: The exchange rate used. Funds are settled in USD.
         
       - name: ocurred_chargeback
         description: boolean value. True when the transaction has been chargedback.
@@ -95,7 +98,7 @@ models:
         description: The three-character ISO currency code.
 
       - name: currency_rate
-        description: The exchange rate used. Funds are settled to you in USD.
+        description: The exchange rate used. Funds are settled in USD.
 
   - name: stg_chargeback
     description: Cleansed view based on GLOBEPAY.RAW.CHARGEBACK
