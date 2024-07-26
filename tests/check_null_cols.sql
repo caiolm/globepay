@@ -1,0 +1,1 @@
+{{ not_null_cols(ref('stg_chargeback')) }}

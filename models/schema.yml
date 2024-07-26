@@ -1,0 +1,58 @@
+version: 2
+
+models:
+  - name: stg_acceptance
+    description: Cleansed table based on GLOBEPAY.RAW.ACCEPTANCE
+    columns:
+      - name: external_ref
+        description: Primary key that can be used to join with GLOBEPAY.DEV.CHARGEBACK
+        data_tests:
+          - unique
+          - not_null
+          - relationships:
+              to: ref('stg_chargeback')
+              field: external_ref
+      - name: status
+        description: Status, and in this sample table is always true
+
+      - name: payment_platform
+        description: payment platform used for the transaction. in this sample is always GLOBALPAY
+        data_tests:
+          - accepted_values:
+              values: [GLOBALPAY]
+      
+      - name: event_ref
+        description: unique value of the event.
+
+      - name: transaction_timestamp_utc
+        description: the moment in UTC time when the transaction happened. 
+
+      - name: transaction_accepted
+        description: boolean value denoting whether the transaction was accepted
+
+      - name: cvv_provided
+        description: boolean value. True in case Card Verification Value (cvv) was provided by the user. It's an optional field, but recommended.
+
+      - name: amount
+        description: the amount paid by the client in their local currency
+
+      - name: card_country_currency
+        description: The two-character ISO country code of the card.
+
+      - name: currency_code
+        description: The three-character ISO currency code.
+
+      - name: currency_rate
+        description: The exchange rate used. Funds are settled to you in USD.
+
+  - name: stg_chargeback
+    columns:
+      - name: external_ref
+        data_tests:
+          - unique
+          - not_null
+      - name: payment_platform
+        data_tests:
+          - accepted_values:
+              values: [GLOBALPAY]
+

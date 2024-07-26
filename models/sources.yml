@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: globepay
+    schema: raw
+    tables:
+      - name: acceptance
+        identifier: external_ref
+
+      - name: chargeback
+        identifier: external_ref
