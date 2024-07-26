@@ -54,12 +54,62 @@ At this stage, data from the two staging views (stg_accepetance and stg_chargeba
 
 ### 4. Tips around macros, data validation, and documentation
 
+**Macros**
+The macro not_null_cols was created for helping to evaluate nulls in columns and it was added to make sure stg_chargeback is fully loaded. There is also the non_negative_value macro, that given a model and a column can evaluate whether it has a value lower than zero. This macro ended up not being used. Instead, it was decided to use a data validation test for that purpose. The macro can still be useful in case the model grows.
+
+**Data validation**
+To ensure data quality and integrity, various data validation tests have been implemented across different models in the dbt project. These validations help in maintaining the accuracy, consistency, and reliability of the data. Some examples of the tests are:
+
+- **usd_amount:**
+Quantile Range Check: 99% of values must be between $50 and $255,000.
+
+- **external_ref:**
+Unique, not null and Referential Integrity.
+
+- **payment_platform:**
+Accepted Values: Only 'GLOBALPAY'.
+
+- **amount:**
+Minimum Value: At least 0.01 and not null
+
+**Documentation**
+
+Documentation is key to maintain a clear understanding of the models and how to use it, specially for analytics. Below a image displaying some of the documentation served by dbt
+
+![alt text](image-2.png)
 
 
+## Part 2
 
-### Resources:
-- Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
-- Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
-- Join the [chat](https://community.getdbt.com/) on Slack for live discussions and support
-- Find [dbt events](https://events.getdbt.com) near you
-- Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
+```sql
+--1. What is the acceptance rate over time? -- LATER MAYBE INCLUDE NO CHARGEBACK FILTER
+SELECT 
+    DATE_TRUNC('month', TRANSACTION_TIMESTAMP_UTC) AS month,
+    COUNT_IF(transaction_accepted)/COUNT(*)
+FROM 
+     GLOBEPAY.DEV.TRANSACTIONS
+GROUP BY 
+    month
+ORDER BY 
+    month;
+    
+--2. List the countries where the amount of declined transactions went over $25M
+SELECT 
+CARD_COUNTRY_CODE, SUM(usd_amount) AS usd_amount_per_country
+FROM 
+     GLOBEPAY.DEV.TRANSACTIONS
+WHERE NOT(transaction_accepted)  
+GROUP BY 
+    CARD_COUNTRY_CODE
+HAVING usd_amount_per_country>25000000
+ORDER BY 
+    usd_amount_per_country desc;
+
+-- 3. Which transactions are missing chargeback data?
+
+-- 3.1 Are all transactions from GLOBEPAY.RAW.ACCEPTANCE on GLOBEPAY.RAW.CHARGEBACK?
+-- ANSWER: YES. In dbt we are testing it but we can also double-check it with the following
+SELECT external_ref FROM GLOBEPAY.RAW.ACCEPTANCE 
+EXCEPT
+SELECT external_ref FROM GLOBEPAY.RAW.CHARGEBACK 
+```
