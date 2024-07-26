@@ -128,6 +128,7 @@ ORDER BY
     usd_amount_per_country desc;
 
 -- 3. Which transactions are missing chargeback data?
+-- I didn't find any specific transaction with missing chargeback. Maybe we are talking about the one transaction found in the preliminary analysis that is a negative amount?
 
 -- 3.1 Are all transactions from GLOBEPAY.RAW.ACCEPTANCE on GLOBEPAY.RAW.CHARGEBACK?
 -- ANSWER: YES. In dbt we are testing it but we can also double-check it with the following
