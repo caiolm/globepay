@@ -50,6 +50,8 @@ At this stage, data from the two staging views (stg_accepetance and stg_chargeba
 
 ### 3. Lineage graphs
 
+Below the lineage graph of the entire model. On green it's represented the raw sources. The blue squares represent the 3 models and the gray represent the generic tests.
+
 ![alt text](image-1.png)
 
 ### 4. Tips around macros, data validation, and documentation
@@ -72,9 +74,7 @@ Accepted Values: Only 'GLOBALPAY'.
 - **amount:**
 Minimum Value: At least 0.01 and not null
 
-**Documentation**
-
-Documentation is key to maintain a clear understanding of the models and how to use it, specially for analytics. Below a image displaying some of the documentation served by dbt
+**Documentation** is key to maintain a clear understanding of the models and how to use it, specially for analytics. Below a image displaying some of the documentation served by dbt
 
 ![alt text](image-2.png)
 
