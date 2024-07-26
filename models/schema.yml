@@ -1,8 +1,54 @@
 version: 2
 
 models:
+###############################################################################################################################
+# CORE TABLE: transactions
+###############################################################################################################################
+  - name: transactions
+    description: Cleansed table based on stg_acceptance and stg_chargeback. Contains details of the payments and chargeback.
+    columns:
+      - name: external_ref
+        description: Primary key that can be used to join with the staging views.
+
+      - name: transaction_timestamp_utc
+        description: The moment in UTC time when the transaction happened.
+
+      - name: transaction_accepted
+        description: boolean value denoting whether the transaction was accepted.
+      
+      - name: usd_amount
+        description: the amount paid by the client converted to USD.
+
+      - name: original_currency_amount
+        description: the amount paid by the client in their local currency.
+
+      - name: card_country_code
+        description: The two-character ISO country code of the card.
+
+      - name: currency_rate
+        description: The three-character ISO currency code.
+        
+      - name: ocurred_chargeback
+        description: boolean value. True when the transaction has been chargedback.
+
+      - name: cvv_provided
+        description: boolean value. True in case Card Verification Value (cvv) was provided by the user. It's an optional field, but recommended.
+
+      - name: status
+        description: Status and in this sample table is always true.
+
+      - name: payment_platform
+        description: payment platform used for the transaction. in this sample is always GLOBALPAY.
+
+      - name: event_ref
+        description: unique value of the event.
+
+  
+###############################################################################################################################
+# STAGING VIEWS: stg_acceptance, stg_chargeback
+###############################################################################################################################
   - name: stg_acceptance
-    description: Cleansed table based on GLOBEPAY.RAW.ACCEPTANCE
+    description: Cleansed view based on GLOBEPAY.RAW.ACCEPTANCE
     columns:
       - name: external_ref
         description: Primary key that can be used to join with GLOBEPAY.DEV.CHARGEBACK
@@ -13,7 +59,7 @@ models:
               to: ref('stg_chargeback')
               field: external_ref
       - name: status
-        description: Status, and in this sample table is always true
+        description: Status and in this sample table is always true
 
       - name: payment_platform
         description: payment platform used for the transaction. in this sample is always GLOBALPAY
@@ -25,16 +71,22 @@ models:
         description: unique value of the event.
 
       - name: transaction_timestamp_utc
-        description: the moment in UTC time when the transaction happened. 
+        description: the moment in UTC time when the transaction happened.
+        data_tests:
+          - not_null 
 
       - name: transaction_accepted
-        description: boolean value denoting whether the transaction was accepted
+        description: boolean value denoting whether the transaction was accepted.
+        data_tests:
+          - not_null
 
       - name: cvv_provided
         description: boolean value. True in case Card Verification Value (cvv) was provided by the user. It's an optional field, but recommended.
 
       - name: amount
         description: the amount paid by the client in their local currency
+        data_tests:
+          - not_null
 
       - name: card_country_currency
         description: The two-character ISO country code of the card.
@@ -46,13 +98,23 @@ models:
         description: The exchange rate used. Funds are settled to you in USD.
 
   - name: stg_chargeback
+    description: Cleansed view based on GLOBEPAY.RAW.CHARGEBACK
     columns:
       - name: external_ref
+        description: Primary key that can be used to join with GLOBEPAY.DEV.ACCEPTANCE
         data_tests:
           - unique
           - not_null
+      
+      - name: status
+        description: Status and in this sample table is always true
+      
       - name: payment_platform
+        description: payment platform used for the transaction. in this sample is always GLOBALPAY
         data_tests:
           - accepted_values:
               values: [GLOBALPAY]
+      
+      - name: ocurred_chargeback
+        description: boolean value. True when the transaction has been chargedback
 
