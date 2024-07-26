@@ -1,4 +1,10 @@
-
+{{
+  config(
+    materialized = 'incremental',
+    on_schema_change='fail',
+    unique_key=['external_ref']
+    )
+}}
 SELECT 
     a.external_ref, 
     transaction_timestamp_utc,
@@ -15,3 +21,6 @@ SELECT
     event_ref
 FROM {{ref('stg_acceptance')}} a
 INNER JOIN {{ref('stg_chargeback')}} c on a.external_ref = c.external_ref
+{% if is_incremental() %}
+    WHERE transaction_timestamp_utc > (SELECT MAX(transaction_timestamp_utc) FROM {{this}})
+{% endif %}

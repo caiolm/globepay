@@ -18,6 +18,11 @@ models:
       
       - name: usd_amount
         description: the amount paid by the client converted to USD.
+        data_tests:
+          - dbt_expectations.expect_column_quantile_values_to_be_between:
+              quantile: .99
+              min_value: 50
+              max_value: 255000
 
       - name: original_currency_amount
         description: the amount paid by the client in their local currency.
@@ -90,6 +95,10 @@ models:
         description: the amount paid by the client in their local currency
         data_tests:
           - not_null
+          - dbt_expectations.expect_column_min_to_be_between:
+              min_value: 0.01
+              config:
+                severity: warn
 
       - name: card_country_currency
         description: The two-character ISO country code of the card.

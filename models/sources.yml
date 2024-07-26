@@ -5,7 +5,7 @@ sources:
     schema: raw
     tables:
       - name: acceptance
-        identifier: external_ref
-
+        loaded_at_field: date_time
+        freshness:
+          warn_after: {count: 24, period: hour}
       - name: chargeback
-        identifier: external_ref
